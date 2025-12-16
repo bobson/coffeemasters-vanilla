@@ -8,9 +8,13 @@ const Router = {
         Router.go(url);
       });
     });
+    // Event Handler for URL changes
+    window.addEventListener("popstate", (e) => {
+      Router.go(e.state.route, false);
+    });
+
     // Cneck the initial URL
     Router.go(location.pathname);
-    // console.log(location.pathname);
   },
   go: function (route, addToHistory = true) {
     if (addToHistory) {
@@ -20,19 +24,28 @@ const Router = {
     let pageElement = null;
     switch (route) {
       case "/":
-        pageElement = el("h1");
-        pageElement.textContent = "Menu";
+        pageElement = el("menu-page");
+
         break;
       case "/order":
-        pageElement = el("h1");
-        pageElement.textContent = "Your Order";
+        pageElement = el("order-page");
+
         break;
+      default:
+        if (route.startsWith("/product-")) {
+          pageElement = el("details-page");
+          const paramID = route.substring(route.lastIndexOf("-") + 1);
+          pageElement.dataset.productId = paramID;
+        }
     }
-    let main = $("main");
-    main.innerHTML = "";
-    main.appendChild(pageElement);
-    window.scrollX = 0;
-    window.scrollY = 0;
+
+    if (pageElement) {
+      let main = $("main");
+      main.innerHTML = "";
+      main.appendChild(pageElement);
+      window.scrollX = 0;
+      window.scrollY = 0;
+    }
   },
 };
 
